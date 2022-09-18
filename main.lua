@@ -2632,6 +2632,68 @@ AddCommand("config", {"conf"}, "shows fates admin config", {}, function(Caller, 
     end
 end)
 
+AddCommand("fly", {}, "fly your character", {3}, function(Caller, Args, CEnv)
+    CEnv[1] = tonumber(Args[1]) or GetConfig().FlySpeed or 2
+    local Speed = CEnv[1]
+    for i, v in next, GetChildren(GetRoot()) do
+        if (IsA(v, "BodyPosition") or IsA(v, "BodyGyro")) then
+            Destroy(v);
+        end
+    end
+    local BodyPos = InstanceNew("BodyPosition");
+    local BodyGyro = InstanceNew("BodyGyro");
+    ProtectInstance(BodyPos);
+    ProtectInstance(BodyGyro);
+    SpoofProperty(GetHumanoid(), "FloorMaterial");
+    SpoofProperty(GetHumanoid(), "PlatformStand");
+    BodyPos.Parent = GetRoot();
+    BodyGyro.Parent = GetRoot();
+    BodyGyro.maxTorque = Vector3New(1, 1, 1) * 9e9
+    BodyGyro.CFrame = GetRoot().CFrame
+    BodyPos.maxForce = Vector3New(1, 1, 1) * math.huge
+    GetHumanoid().PlatformStand = true
+    CThread(function()
+        BodyPos.Position = GetRoot().Position
+        while (next(LoadCommand("fly").CmdEnv) and wait()) do
+            Speed = LoadCommand("fly").CmdEnv[1]
+            local NewPos = (BodyGyro.CFrame - (BodyGyro.CFrame).Position) + BodyPos.Position
+            local CoordinateFrame = Camera.CoordinateFrame
+            if (Keys["W"]) then
+                NewPos = NewPos + CoordinateFrame.lookVector * Speed
+
+                BodyPos.Position = (GetRoot().CFrame * CFrameNew(0, 0, -Speed)).Position;
+                BodyGyro.CFrame = CoordinateFrame * CFrame.Angles(-rad(Speed * 15), 0, 0);
+            end
+            if (Keys["A"]) then
+                NewPos = NewPos * CFrameNew(-Speed, 0, 0);
+            end
+            if (Keys["S"]) then
+                NewPos = NewPos - CoordinateFrame.lookVector * Speed
+
+                BodyPos.Position = (GetRoot().CFrame * CFrameNew(0, 0, Speed)).Position;
+                BodyGyro.CFrame = CoordinateFrame * CFrame.Angles(-rad(Speed * 15), 0, 0);
+            end
+            if (Keys["D"]) then
+                NewPos = NewPos * CFrameNew(Speed, 0, 0);
+            end
+            BodyPos.Position = NewPos.Position
+            BodyGyro.CFrame = CoordinateFrame
+        end
+        GetHumanoid().PlatformStand = false
+    end)();
+end)
+
+AddCommand("flyspeed", {"fs"}, "changes the fly speed", {3, "1"}, function(Caller, Args)
+    local Speed = tonumber(Args[1]);
+    LoadCommand("fly").CmdEnv[1] = Speed or LoadCommand("fly2").CmdEnv[1]
+    if (Speed) then
+        SetConfig({FlySpeed=Speed});
+        return "your fly speed is now " .. Speed
+    else
+        return "flyspeed must be a number"
+    end
+end)
+
 task.spawn(function()
     local chatted = function(plr, raw)
         local message = raw
