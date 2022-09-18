@@ -2608,49 +2608,6 @@ do
                 end
             end
         end
-
-        if (Input.KeyCode == Enum.KeyCode.F8) then
-            if (Console.Visible) then
-                local Tween = Utils.TweenAllTrans(Console, .25)
-                CWait(Tween.Completed);
-                Console.Visible = false
-            else
-                local MessageClone = Clone(Console.Frame.List);
-    
-                Utils.ClearAllObjects(Console.Frame.List)
-                Console.Visible = true
-            
-                local Tween = Utils.TweenAllTransToObject(Console, .25, ConsoleTransparencyClone)
-            
-                Destroy(Console.Frame.List)
-                MessageClone.Parent = Console.Frame
-            
-                for i, v in next, GetChildren(Console.Frame.List) do
-                    if (not IsA(v, "UIListLayout")) then
-                        Utils.Tween(v, "Sine", "Out", .25, {
-                            TextTransparency = 0
-                        })
-                    end
-                end
-            
-                local ConsoleListLayout = Console.Frame.List.UIListLayout
-            
-                CConnect(GetPropertyChangedSignal(ConsoleListLayout, "AbsoluteContentSize"), function()
-                    local CanvasPosition = Console.Frame.List.CanvasPosition
-                    local CanvasSize = Console.Frame.List.CanvasSize
-                    local AbsoluteSize = Console.Frame.List.AbsoluteSize
-            
-                    if (CanvasSize.Y.Offset - AbsoluteSize.Y - CanvasPosition.Y < 20) then
-                       wait();
-                       Console.Frame.List.CanvasPosition = Vector2.new(0, CanvasSize.Y.Offset + 1000);
-                    end
-                end)
-            
-                Utils.Tween(Console.Frame.List, "Sine", "Out", .25, {
-                    ScrollBarImageTransparency = 0
-                })
-            end
-        end
     end));
     AddConnection(CConnect(UserInputService.InputEnded, function(Input, GameProcessed)
         if (GameProcessed) then return end
@@ -2673,43 +2630,6 @@ AddCommand("config", {"conf"}, "shows fates admin config", {}, function(Caller, 
         CEnv[1] = true
         return "config loaded"
     end
-end)
-
-AddCommand("console", {"errors", "warns", "outputs"}, "shows the outputs fates admin has made", {}, function()
-    local MessageClone = Clone(Console.Frame.List);
-    
-    Utils.ClearAllObjects(Console.Frame.List)
-    Console.Visible = true
-
-    local Tween = Utils.TweenAllTransToObject(Console, .25, ConsoleTransparencyClone)
-
-    Destroy(Console.Frame.List)
-    MessageClone.Parent = Console.Frame
-
-    for i, v in next, GetChildren(Console.Frame.List) do
-        if (not IsA(v, "UIListLayout")) then
-            Utils.Tween(v, "Sine", "Out", .25, {
-                TextTransparency = 0
-            })
-        end
-    end
-
-    local ConsoleListLayout = Console.Frame.List.UIListLayout
-
-    CConnect(GetPropertyChangedSignal(ConsoleListLayout, "AbsoluteContentSize"), function()
-        local CanvasPosition = Console.Frame.List.CanvasPosition
-        local CanvasSize = Console.Frame.List.CanvasSize
-        local AbsoluteSize = Console.Frame.List.AbsoluteSize
-
-        if (CanvasSize.Y.Offset - AbsoluteSize.Y - CanvasPosition.Y < 20) then
-           wait();
-           Console.Frame.List.CanvasPosition = Vector2.new(0, CanvasSize.Y.Offset + 1000);
-        end
-    end)
-
-    Utils.Tween(Console.Frame.List, "Sine", "Out", .25, {
-        ScrollBarImageTransparency = 0
-    })
 end)
 
 task.spawn(function()
