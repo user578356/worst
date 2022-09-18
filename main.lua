@@ -5,6 +5,33 @@ if (not game.IsLoaded(game)) then
     Loaded.Wait(Loaded);
 end
 
+local queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
+
+game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(State)
+	if State == Enum.TeleportState.Started then
+		if queueteleport then
+			queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/user578356/worst/main/main.lua'))();")
+		end
+	end
+end)
+
+local _L = {}
+
+_L.start = start or tick();
+local Debug = true
+
+do
+    local F_A = getgenv().F_A
+    if (F_A) then
+        local Notify, GetConfig = F_A.Utils.Notify, F_A.GetConfig
+        local UserInputService = GetService(game, "UserInputService");
+        local CommandBarPrefix = GetConfig().CommandBarPrefix
+        local StringKeyCode = UserInputService.GetStringForKeyCode(UserInputService, Enum.KeyCode[CommandBarPrefix]);
+        return Notify(nil, "Loaded", "fates admin is already loaded... use 'killscript' to kill", nil),
+        Notify(nil, "Your Prefix is", string.format("%s (%s)", StringKeyCode, CommandBarPrefix));
+    end
+end
+
 --IMPORT [var]
 local Services = {
     Workspace = GetService(game, "Workspace");
@@ -26,32 +53,6 @@ local Services = {
     ScriptContext = GetService(game, "ScriptContext");
     Stats = GetService(game, "Stats");
 }
-local Players = Services.Players
-local queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
-
-Players.LocalPlayer.OnTeleport:Connect(function(State)
-	if State == Enum.TeleportState.Started then
-		if queueteleport then
-			queueteleport("loadstring(game:HttpGet('https://raw.githubusercontent.com/user578356/worst/main/main.lua'))();")
-		end
-	end
-end)
-
-local _L = {}
-
-_L.start = start or tick();
-local Debug = true
-
-do
-    local F_A = getgenv().F_A
-    if (F_A) then
-        local Notify, GetConfig = F_A.Utils.Notify, F_A.GetConfig
-        local UserInputService = GetService(game, "UserInputService");
-        local CommandBarPrefix = GetConfig().CommandBarPrefix
-        local StringKeyCode = UserInputService.GetStringForKeyCode(UserInputService, Enum.KeyCode[CommandBarPrefix]);
-    end
-end
-
 
 setmetatable(Services, {
     __index = function(Table, Property)
@@ -88,6 +89,7 @@ do
         RunService.RenderStepped
 end
 
+local Players = Services.Players
 local GetPlayers = Players.GetPlayers
 
 local JSONEncode, JSONDecode, GenerateGUID = 
