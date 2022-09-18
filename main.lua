@@ -5,8 +5,6 @@ if (not game.IsLoaded(game)) then
     Loaded.Wait(Loaded);
 end
 
-local Players = Services.Players
-
 --IMPORT [var]
 local Services = {
     Workspace = GetService(game, "Workspace");
@@ -28,7 +26,7 @@ local Services = {
     ScriptContext = GetService(game, "ScriptContext");
     Stats = GetService(game, "Stats");
 }
-
+local Players = Services.Players
 local queueteleport = (syn and syn.queue_on_teleport) or queue_on_teleport or (fluxus and fluxus.queue_on_teleport)
 
 Players.LocalPlayer.OnTeleport:Connect(function(State)
